@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom"; // import Link from react-router-dom
 
 export default function ConferenceByTopics() {
   const [topics, setTopics] = useState([]);
@@ -6,15 +7,15 @@ export default function ConferenceByTopics() {
 
   useEffect(() => {
     fetch("http://localhost:5000/api/topics")
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setTopics(data);
-        if (data.length > 0) setActiveTopic(data[0].id); // default first topic
+        if (data.length > 0) setActiveTopic(data[0].id);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }, []);
 
-  const active = topics.find(t => t.id === activeTopic);
+  const active = topics.find((t) => t.id === activeTopic);
 
   return (
     <div className="bg-gray-50 py-12 px-6 min-h-screen">
@@ -51,7 +52,13 @@ export default function ConferenceByTopics() {
                 {active.subtopics.map((sub, idx) => (
                   <li key={idx} className="text-gray-800 text-sm flex items-start">
                     <span className="mr-2 text-purple-500">•</span>
-                    {sub}
+                    {/* Make subtopic a clickable link */}
+                    <Link
+                      to={`/ListingBySubtopics/${encodeURIComponent(sub.toLowerCase().replace(/\s+/g, '-'))}`}
+                      className="hover:underline text-black-600"
+                    >
+                      {sub}
+                    </Link>
                   </li>
                 ))}
               </ul>
