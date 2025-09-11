@@ -11,6 +11,8 @@ import ListingByCountry from "./components/Listingpage/ListingByCountry";
 import ListingByTopics from "./components/Listingpage/ListingByTopics"; 
 import ListingBySubtopics from "./components/Listingpage/ListingBySubtopics"; 
 import ListingByMonth from "./components/Listingpage/ListingByMonth"; 
+import ListingByContinent from "./components/Listingpage/ListingByContinent"; 
+import EventDetail from "./EventDetail";
 
 function App() {
   return (
@@ -25,12 +27,13 @@ function App() {
         <Route path="Journal" element={<Journal />} />
         <Route path="Faq" element={<Faq />} />
         <Route path="Listing" element={<Listing />} />
-
+<Route path="/eventdetail/:id" element={<EventDetail />} />
         {/* Dynamic routes */}
         <Route path="ListingByCountry/:country" element={<ListingByCountry />} />
        <Route path="ListingByTopics/:topic" element={<ListingByTopics />} />
         <Route path="ListingBySubtopics/:subtopic" element={<ListingBySubtopics />} />
          <Route path="ListingByMonth/:month" element={<ListingByMonth />} />
+         <Route path="ListingByContinent/:continent" element={<ListingByContinent />} />
       </Routes>
 
       <Footer />

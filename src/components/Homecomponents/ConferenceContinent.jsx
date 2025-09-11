@@ -1,14 +1,15 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-// Continents data with image URLs + optional description
+// Continents data
 const continents = [
-  { name: "Africa", flag: "https://flagcdn.com/w80/af.png", desc: "Explore conferences across Africa" },
-  { name: "Asia", flag: "https://flagcdn.com/w80/as.png", desc: "Discover Asia's top conference cities" },
-  { name: "Europe", flag: "https://flagcdn.com/w80/eu.png", desc: "Europe: Science, Tech & Business events" },
-  { name: "North America", flag: "https://flagcdn.com/w80/na.png", desc: "Conferences across USA, Canada, Mexico" },
-  { name: "South America", flag: "https://flagcdn.com/w80/sa.png", desc: "Find top South American conferences" },
-  { name: "Oceania", flag: "https://flagcdn.com/w80/oc.png", desc: "Events in Australia, New Zealand & islands" },
-  { name: "Antarctica", flag: "https://flagcdn.com/w80/aq.png", desc: "Scientific and research conferences" },
+  { name: "Africa", slug: "africa", flag: "https://flagcdn.com/w80/af.png", desc: "Explore conferences across Africa" },
+  { name: "Asia", slug: "asia", flag: "https://flagcdn.com/w80/as.png", desc: "Discover Asia's top conference cities" },
+  { name: "Europe", slug: "europe", flag: "https://flagcdn.com/w80/eu.png", desc: "Europe: Science, Tech & Business events" },
+  { name: "North America", slug: "north-america", flag: "https://flagcdn.com/w80/na.png", desc: "Conferences across USA, Canada, Mexico" },
+  { name: "South America", slug: "south-america", flag: "https://flagcdn.com/w80/sa.png", desc: "Find top South American conferences" },
+  { name: "Oceania", slug: "oceania", flag: "https://flagcdn.com/w80/oc.png", desc: "Events in Australia, New Zealand & islands" },
+  { name: "Antarctica", slug: "antarctica", flag: "https://flagcdn.com/w80/aq.png", desc: "Scientific and research conferences" },
 ];
 
 export default function InnovativeContinents() {
@@ -28,8 +29,9 @@ export default function InnovativeContinents() {
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
         {continents.map((continent, idx) => (
-          <div
+          <Link
             key={idx}
+            to={`/ListingByContinent/${continent.slug}`}
             onClick={() => setActiveContinent(continent.name)}
             className={`relative group cursor-pointer rounded-2xl p-6 flex flex-col items-center transition-transform transform shadow-lg hover:scale-105
               ${
@@ -59,7 +61,7 @@ export default function InnovativeContinents() {
             {activeContinent === continent.name && (
               <span className="absolute inset-0 rounded-2xl shadow-xl bg-gradient-to-r from-purple-400 to-pink-400 opacity-30 animate-pulse"></span>
             )}
-          </div>
+          </Link>
         ))}
       </div>
 

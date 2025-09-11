@@ -7,6 +7,8 @@ import eventsByCountryRoute from "./routes/eventsByCountry.js";
 import eventsByTopicsRoute from "./routes/eventsByTopics.js";
 import eventsBySubtopicsRoute from "./routes/eventsBySubtopics.js";
 import eventsByMonthRoute from "./routes/eventsByMonth.js";
+import eventsByContinent from "./routes/eventsByContinent.js";
+import eventDetailRouter from "./routes/eventDetail.js";
 
 
 
@@ -23,6 +25,8 @@ app.use("/api/eventsByCountry", eventsByCountryRoute);
 app.use("/api/eventsByTopic", eventsByTopicsRoute);
 app.use("/api/eventsBySubtopics", eventsBySubtopicsRoute);
 app.use("/api/eventsByMonth", eventsByMonthRoute);
+app.use("/api/eventsByContinent", eventsByContinent);
+app.use("/api/event", eventDetailRouter);
 
 
 app.listen(5000, () => console.log("Server running on port 5000"));
