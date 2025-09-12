@@ -42,38 +42,39 @@ export default function SimilarEvents({ similarEvents }) {
     ],
   };
 
-  return (
-    similarEvents.length > 0 && (
-      <div className="bg-gray-50 p-6 md:p-12 relative">
-        <h2 className="text-2xl font-bold mb-6">Other Events You May Like</h2>
-        <Slider {...settings}>
-          {similarEvents.map((e) => (
-            <div key={e.event_id} className="px-2"> {/* 👈 spacing between slides */}
-              <Link
-                to={`/eventdetail/${e.event_id}`}
-                className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col h-full"
-              >
-                <img
-                  src={e.banner || "/event-thumb.jpg"}
-                  alt={e.event_name}
-                  className="h-40 w-full object-cover"
-                />
-                <div className="p-4 flex flex-col flex-grow">
-                  <h3 className="font-semibold text-purple-700 line-clamp-2">
-                    {e.event_name}
-                  </h3>
-                  <p className="text-gray-500 text-sm mt-1">
-                    {e.city}, {e.country}
-                  </p>
-                  <p className="text-gray-400 text-xs mt-auto">
-                    {new Date(e.sdate).toLocaleDateString()}
-                  </p>
-                </div>
-              </Link>
-            </div>
-          ))}
-        </Slider>
-      </div>
-    )
-  );
+return (
+  Array.isArray(similarEvents) && similarEvents.length > 0 && (
+    <div className="bg-gray-50 p-6 md:p-12 relative">
+      <h2 className="text-2xl font-bold mb-6">Other Events You May Like</h2>
+      <Slider {...settings}>
+        {similarEvents.map((e) => (
+          <div key={e.event_id} className="px-2">
+            <Link
+              to={`/eventdetail/${e.event_id}`}
+              className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden flex flex-col h-full"
+            >
+              <img
+                src={e.banner || "/event-thumb.jpg"}
+                alt={e.event_name}
+                className="h-40 w-full object-cover"
+              />
+              <div className="p-4 flex flex-col flex-grow">
+                <h3 className="font-semibold text-purple-700 line-clamp-2">
+                  {e.event_name}
+                </h3>
+                <p className="text-gray-500 text-sm mt-1">
+                  {e.city}, {e.country}
+                </p>
+                <p className="text-gray-400 text-xs mt-auto">
+                  {new Date(e.sdate).toLocaleDateString()}
+                </p>
+              </div>
+            </Link>
+          </div>
+        ))}
+      </Slider>
+    </div>
+  )
+);
+
 }

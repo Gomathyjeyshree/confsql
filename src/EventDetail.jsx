@@ -4,6 +4,7 @@ import axios from "axios";
 import eventbanner from './assets/images/event-background.jpg'
 import Countdown from "./components/countdown";
 import SimilarEvents from "./components/SimilarEvents"
+import { Mail, Phone, Calendar, User, Building2 } from "lucide-react";
 
 export default function EventDetail() {
   const { id } = useParams();
@@ -97,6 +98,89 @@ export default function EventDetail() {
 
         {/* Right: Location, Organizer, Tags, Share */}
         <div className="space-y-6">
+             {/* Organizer */}
+          <div className="bg-white rounded-xl shadow p-6 mt-8">
+      <h2 className="text-2xl font-bold mb-6 border-b pb-2">
+        Conference Details
+      </h2>
+
+      <div className="grid gap-6">
+        {/* Organized By */}
+        <div className="flex items-start gap-4">
+          <div className="p-3 bg-purple-100 text-purple-600 rounded-full">
+            <Building2 size={20} />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-500">Conference Organized By:</p>
+            <p className="text-lg font-semibold text-gray-800">{event.org}</p>
+          </div>
+        </div>
+
+        {/* Contact Person */}
+        <div className="flex items-start gap-4">
+          <div className="p-3 bg-blue-100 text-blue-600 rounded-full">
+            <User size={20} />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-500">Conference Contact Person:</p>
+            <p className="text-lg font-semibold text-gray-800">{event.contact_person}</p>
+            {event.contact_no && (
+              <p className="text-gray-600 flex items-center gap-1">
+                <Phone size={14} /> {event.contact_no}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Inquiry Email */}
+        <div className="flex items-start gap-4">
+          <div className="p-3 bg-green-100 text-green-600 rounded-full">
+            <Mail size={20} />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-500">Conference Inquiry Email ID:</p>
+            <a
+              href={`mailto:${event.contact_email}`}
+              className="text-lg font-semibold text-purple-700 hover:underline"
+            >
+              {event.contact_email}
+            </a>
+          </div>
+        </div>
+
+        {/* Important Dates */}
+        <div className="flex items-start gap-4">
+          <div className="p-3 bg-red-100 text-red-600 rounded-full">
+            <Calendar size={20} />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-500">Important Dates:</p>
+            <ul className="list-disc list-inside text-gray-700 mt-1">
+              <li><span className="font-semibold">Start Date:</span> {new Date(event.sdate).toLocaleDateString()}</li>
+              <li><span className="font-semibold">End Date:</span> {new Date(event.edate).toLocaleDateString()}</li>
+              {event.submission_deadline && (
+                <li><span className="font-semibold">Submission Deadline:</span> {new Date(event.submission_deadline).toLocaleDateString()}</li>
+              )}
+              {event.registration_deadline && (
+                <li><span className="font-semibold">Registration Deadline:</span> {new Date(event.registration_deadline).toLocaleDateString()}</li>
+              )}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+       
+
+          {/* Share */}
+          <div className="bg-white rounded-lg shadow p-4">
+            <h3 className="font-bold mb-2">Share With Friends</h3>
+            <div className="flex gap-3">
+              <a href="#" className="text-blue-600">Fb</a>
+              <a href="#" className="text-sky-500">Tw</a>
+              <a href="#" className="text-blue-700">Ln</a>
+            </div>
+          </div>
           {/* Map */}
           <div className="bg-white rounded-lg shadow p-4">
             <h3 className="font-bold mb-2">Event Location</h3>
@@ -114,39 +198,14 @@ export default function EventDetail() {
             <p className="mt-2 text-sm">{stripHtml(event.venue_address)}</p>
           </div>
 
-          {/* Organizer */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="font-bold mb-2">Organizer</h3>
-            <p><strong>{event.org}</strong></p>
-            <p>{event.contact_person}</p>
-            <p>{event.contact_no}</p>
-            <p className="text-purple-700">{event.contact_email}</p>
-          </div>
-
-          {/* Tags */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="font-bold mb-2">Tags</h3>
-            <div className="flex flex-wrap gap-2">
-              <span className="bg-gray-200 px-3 py-1 rounded-full text-sm">#{event.topic}</span>
-              <span className="bg-gray-200 px-3 py-1 rounded-full text-sm">#{event.sub_topic}</span>
-              <span className="bg-gray-200 px-3 py-1 rounded-full text-sm">#{event.event_type}</span>
-            </div>
-          </div>
-
-          {/* Share */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="font-bold mb-2">Share With Friends</h3>
-            <div className="flex gap-3">
-              <a href="#" className="text-blue-600">Fb</a>
-              <a href="#" className="text-sky-500">Tw</a>
-              <a href="#" className="text-blue-700">Ln</a>
-            </div>
-          </div>
+       
         </div>
       </div>
 
       {/* Other Events */}
-    <SimilarEvents />
+   {/* Other Events */}
+<SimilarEvents similarEvents={similarEvents} />
+
     </div>
   );
 }
