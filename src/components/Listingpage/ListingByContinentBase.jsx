@@ -1,33 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom"; // <-- import Link
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import Pagination from "../Pagination";
 
-export default function ListingByContinent() {
-  const { continent } = useParams();
+export default function ListingByContinentBase() {
+  const { continent, topic, subtopic } = useParams();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState(null);
   const [page, setPage] = useState(1);
-  const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
 
   useEffect(() => {
     if (!continent) return;
 
     setLoading(true);
+
+    let apiUrl = "";
+    if (topic) {
+      apiUrl = `http://localhost:5000/api/eventsByContinentTopic/${continent}/${topic}?page=${page}&limit=10`;
+    } else if (subtopic) {
+      apiUrl = `http://localhost:5000/api/eventsByContinentSubtopic/${continent}/${subtopic}?page=${page}&limit=10`;
+    } else {
+      apiUrl = `http://localhost:5000/api/eventsByContinent/${continent}?page=${page}&limit=10`;
+    }
+
     axios
-      .get(
-        `http://localhost:5000/api/eventsByContinent/${continent.trim()}?page=${page}&limit=10`
-      )
+      .get(apiUrl)
       .then((res) => {
-        setEvents(res.data.events);
-        setPagination(res.data.pagination);
+        setEvents(res.data?.events || []);
+        setPagination(res.data?.pagination || null);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("❌ Error fetching events:", err);
+        console.error("❌ API error:", err);
+        setEvents([]);
+        setPagination(null);
         setLoading(false);
       });
-  }, [continent, page]);
+  }, [continent, topic, subtopic, page]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -44,15 +54,24 @@ export default function ListingByContinent() {
   };
 
   if (loading) return <div className="text-center py-12">Loading events...</div>;
-  if (!events.length)
-    return <div className="text-center py-12">No events found in {continent}.</div>;
+
+  if (!events.length) {
+    return (
+      <div className="text-center py-12">
+        No events found in {continent}{" "}
+        {topic ? `for topic "${topic}"` : subtopic ? `for subtopic "${subtopic}"` : ""}.
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen py-12 px-4">
-      <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
         <h2 className="text-2xl font-bold text-center py-4">
-          Events in {continent}
+          Events in {continent.charAt(0).toUpperCase() + continent.slice(1)}{" "}
+          {topic ? `– Topic: ${topic}` : subtopic ? `– Subtopic: ${subtopic}` : ""}
         </h2>
+
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gradient-to-r from-purple-600 to-purple-800 text-white">
@@ -67,6 +86,9 @@ export default function ListingByContinent() {
                   Country
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  City
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Venue
                 </th>
               </tr>
@@ -75,17 +97,16 @@ export default function ListingByContinent() {
               {events.map((event, idx) => (
                 <tr key={idx} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 font-semibold">
-            <td className="px-6 py-4 font-semibold">
- <Link to={`/eventdetail/${event.event_id}`} className="text-purple-700 hover:underline">
-  {event.event_name}
-</Link>
-
-
-</td>
-
+                    <Link
+                      to={`/eventdetail/${event.event_id}`}
+                      className="text-purple-700 hover:underline"
+                    >
+                      {event.event_name}
+                    </Link>
                   </td>
                   <td className="px-6 py-4">{formatDate(event.sdate)}</td>
                   <td className="px-6 py-4">{event.country}</td>
+                  <td className="px-6 py-4">{event.city || "-"}</td>
                   <td className="px-6 py-4">{stripHtml(event.venue_address)}</td>
                 </tr>
               ))}
@@ -93,12 +114,13 @@ export default function ListingByContinent() {
           </table>
         </div>
 
-        {/* Pagination */}
-        <Pagination
-          page={page}
-          totalPages={pagination.totalPages}
-          onPageChange={setPage}
-        />
+        {pagination && pagination.totalPages > 1 && (
+          <Pagination
+            page={pagination.page}
+            totalPages={pagination.totalPages}
+            onPageChange={setPage}
+          />
+        )}
       </div>
     </div>
   );

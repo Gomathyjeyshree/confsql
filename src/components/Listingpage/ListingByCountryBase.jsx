@@ -2,40 +2,50 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import Pagination from "../Pagination";
+import FilterSection from "../FilterSection";
 
-export default function ListingByCity() {
-  const { city } = useParams();
+export default function ListingByCountryBase() {
+  const { country, topic, subtopic } = useParams();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState(null);
   const [page, setPage] = useState(1);
-  const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
 
   useEffect(() => {
-    if (!city) return;
+    if (!country) return;
 
     setLoading(true);
 
-   axios.get(
-  `http://localhost:5000/api/eventsByCity/${city.trim()}?page=${page}&limit=10`
-)
+    // Decide API endpoint dynamically
+    let endpoint = "";
+    if (topic) {
+      endpoint = `http://localhost:5000/api/eventsByCountryTopic/${country}/${topic}?page=${page}&limit=10`;
+    } else if (subtopic) {
+      endpoint = `http://localhost:5000/api/eventsByCountrySubtopic/${country}/${subtopic}?page=${page}&limit=10`;
+    } else {
+      endpoint = `http://localhost:5000/api/eventsByCountry/${country}?page=${page}&limit=10`;
+    }
 
+    axios
+      .get(endpoint)
       .then((res) => {
-        setEvents(res.data.events);
-        setPagination(res.data.pagination);
+        setEvents(res.data?.events || []);
+        setPagination(res.data?.pagination || null);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("❌ Error fetching events:", err);
+        console.error("❌ API error:", err);
+        setEvents([]);
+        setPagination(null);
         setLoading(false);
       });
-  }, [city, page]);
+  }, [country, topic, subtopic, page]);
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const dd = String(date.getDate()).padStart(2, "0");
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const yyyy = date.getFullYear();
-    return `${dd}-${mm}-${yyyy}`;
+  const formatDate = (dateStr) => {
+    const d = new Date(dateStr);
+    return `${String(d.getDate()).padStart(2, "0")}-${String(
+      d.getMonth() + 1
+    ).padStart(2, "0")}-${d.getFullYear()}`;
   };
 
   const stripHtml = (html) => {
@@ -44,15 +54,24 @@ export default function ListingByCity() {
     return div.textContent || div.innerText || "";
   };
 
-  if (loading) return <div className="text-center py-12">Loading events...</div>;
-  if (!events.length)
-    return <div className="text-center py-12">No events found in {city}.</div>;
+  if (loading) return <p className="text-center py-12">Loading events...</p>;
+  if (!events.length) {
+    return (
+      <p className="text-center py-12">
+        No events found in {country}
+        {topic ? ` for topic "${topic}"` : ""}
+        {subtopic ? ` for subtopic "${subtopic}"` : ""}.
+      </p>
+    );
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen py-12 px-4">
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
         <h2 className="text-2xl font-bold text-center py-4">
-          Events in {city}
+          Events in {country}
+          {topic ? ` – ${topic}` : ""}
+          {subtopic ? ` – ${subtopic}` : ""}
         </h2>
 
         <div className="overflow-x-auto">
@@ -85,7 +104,7 @@ export default function ListingByCity() {
                     </Link>
                   </td>
                   <td className="px-6 py-4">{formatDate(event.sdate)}</td>
-                  <td className="px-6 py-4">{event.city}</td>
+                  <td className="px-6 py-4">{event.city || event.country}</td>
                   <td className="px-6 py-4">{stripHtml(event.venue_address)}</td>
                 </tr>
               ))}
@@ -93,13 +112,15 @@ export default function ListingByCity() {
           </table>
         </div>
 
-        {/* Pagination */}
-        <Pagination
-          page={page}
-          totalPages={pagination.totalPages}
-          onPageChange={setPage}
-        />
+        {pagination && pagination.totalPages > 1 && (
+          <Pagination
+            page={pagination.page || page}
+            totalPages={pagination.totalPages}
+            onPageChange={setPage}
+          />
+        )}
       </div>
+      <FilterSection />
     </div>
   );
 }

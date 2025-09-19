@@ -7,50 +7,58 @@ import Subscribe from "./Subscribe";
 import Journal from "./journal";
 import Faq from "./faq";
 import Listing from "./components/Listingpage/Listing";
-import ListingByCountry from "./components/Listingpage/ListingByCountry";
-import ListingByTopics from "./components/Listingpage/ListingByTopics"; 
-import ListingBySubtopics from "./components/Listingpage/ListingBySubtopics"; 
-import ListingByMonth from "./components/Listingpage/ListingByMonth"; 
-import ListingByContinent from "./components/Listingpage/ListingByContinent"; 
-import ListingByCity from "./components/Listingpage/ListingByCity";
+
+import ListingByTopics from "./components/Listingpage/ListingByTopics";
+import ListingBySubtopics from "./components/Listingpage/ListingBySubtopics";
+import ListingByMonth from "./components/Listingpage/ListingByMonth";
 import EventDetail from "./EventDetail";
-import ListingByContinentTopic from "./components/Listingpage/ListingByContinentTopic";
-import ListingByCountryTopic from "./components/Listingpage/ListingByCountryTopic";
-import ListingByCityTopic from "./components/Listingpage/ListingByCityTopic";
-import ListingByCitySubtopic from "./components/Listingpage/ListingByCitySubtopic";
-import ListingByCountrySubtopic from "./components/Listingpage/ListingByCountrySubtopic";
-import ListingByContinentSubtopic from "./components/Listingpage/ListingByContinentSubtopic";
+import FilterSection from "./components/FilterSection";
+import Filter from "./components/filter/topic-filter"
+
+// ✅ Unified base components
+import ListingByCityBase from "./components/Listingpage/ListingByCityBase";
+import ListingByContinentBase from "./components/Listingpage/ListingByContinentBase";
+import ListingByCountryBase from "./components/Listingpage/ListingByCountryBase";
+
+
 function App() {
   return (
     <>
       <Header />
 
       <Routes>
+        {/* Static Pages */}
         <Route path="/" element={<Homepage />} />
         <Route path="/about" element={<About />} />
         <Route path="/subscribe" element={<Subscribe />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/listing" element={<Listing />} />
+        <Route path="/filtersection" element={<FilterSection />} />
+        <Route path="/Filter" element={<topic-filter />}/>
 
         {/* Event Detail */}
         <Route path="/eventdetail/:id" element={<EventDetail />} />
 
-        {/* Dynamic Routes */}
-        <Route path="/listingbycountry/:country" element={<ListingByCountry />} />
+        {/* Topic / Subtopic / Month */}
         <Route path="/listingbytopics/:topic" element={<ListingByTopics />} />
         <Route path="/listingbysubtopics/:subtopic" element={<ListingBySubtopics />} />
         <Route path="/listingbymonth/:month" element={<ListingByMonth />} />
-        <Route path="/listingbycontinent/:continent" element={<ListingByContinent />} />
-        <Route path="/listingbycity/:city" element={<ListingByCity />} />
-       <Route path="/ListingByContinentTopic/:continent/:topic" element={<ListingByContinentTopic />} />
-    <Route path="/ListingByCountryTopic/:country/:topic" element={<ListingByCountryTopic />} />
-<Route path="/ListingByCityTopic/:city/:topic" element={<ListingByCityTopic />} />
-<Route path="/ListingByContinentSubtopic/:continent/:subtopic" element={<ListingByContinentSubtopic />} />
-<Route path="/ListingByCountrySubtopic/:country/:subtopic" element={<ListingByCountrySubtopic />} />
-<Route path="/ListingByCitySubtopic/:city/:subtopic" element={<ListingByCitySubtopic />} />
 
+        {/* ✅ Unified City Routes */}
+        <Route path="/listingbycity/:city" element={<ListingByCityBase />} />
+        <Route path="/listingbycity/:city/:topic" element={<ListingByCityBase />} />
+        <Route path="/listingbycity/:city/:subtopic" element={<ListingByCityBase />} />
 
+        {/* ✅ Unified Country Routes */}
+        <Route path="/listingbycountry/:country" element={<ListingByCountryBase />} />
+        <Route path="/listingbycountry/:country/:topic" element={<ListingByCountryBase />} />
+        <Route path="/listingbycountry/:country/:subtopic" element={<ListingByCountryBase />} />
+
+        {/* ✅ Unified Continent Routes */}
+        <Route path="/listingbycontinent/:continent" element={<ListingByContinentBase />} />
+        <Route path="/listingbycontinent/:continent/:topic" element={<ListingByContinentBase />} />
+        <Route path="/listingbycontinent/:continent/:subtopic" element={<ListingByContinentBase />} />
       </Routes>
 
       <Footer />
